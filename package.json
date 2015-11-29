@@ -1,0 +1,21 @@
+{
+  "name": "wallsplash",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "q": "^1.4.1",
+    "ramda": "^0.18.0",
+    "request": "2.65.0",
+    "wallpaper": "^2.1.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.1.18"
+  }
+}
