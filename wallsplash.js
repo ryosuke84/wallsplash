@@ -41,9 +41,9 @@ const main = () => {
   searchAndDownload('random')
   .then((imagePath) => {
     wallpaper.set(imagePath)
-    setTimeout(main, 3000);
+    setTimeout(main, 5000);
   });
 }
 
 //Main loop
-setTimeout(main, 3000);
+setTimeout(main, 5000);
