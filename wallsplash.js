@@ -14,6 +14,7 @@ const createUnsplashUrl = (photoResolution, categoryName) => {
     url = `${unsplashBaseUrl}/category/${categoryName}/${photoResolution}`;
   const deferred = Q.defer();
   deferred.resolve(url);
+  // deferred.reject("Error");
   return deferred.promise;
 };
 const downloadImage = (destinationPath, imageUrl) => {
@@ -36,13 +37,13 @@ const createUnsplashUrlLarge = curriedCreateUnsplashUrl("1920x1080");
 const downloadImageToJunkFolder = curriedDownloadImage(imageDestinationPath + '/image.jpg');
 
 
-const searchAndDownload = R.pipe(createUnsplashUrlLarge,downloadImageToJunkFolder);
+const searchAndDownload = R.pipeP(createUnsplashUrlLarge,downloadImageToJunkFolder);
 const main = () => {
   searchAndDownload('random')
   .then((imagePath) => {
     wallpaper.set(imagePath)
     setTimeout(main, 5000);
-  });
+  }, (error) => console.log(error));
 }
 
 //Main loop
