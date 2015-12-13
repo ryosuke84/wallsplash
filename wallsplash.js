@@ -4,6 +4,7 @@ import Q          from "q";
 import fs         from "fs";
 import wallpaper  from "wallpaper";
 import PromiseMaybe      from './PromiseMaybe';
+import WallsplashOptions      from './WallsplashOptions';
 
 const unsplashBaseUrl = 'https://source.unsplash.com';
 const imageDestinationPath = 'C:/junk';
@@ -14,9 +15,7 @@ const categories = ['buildings', 'food', 'nature', 'people', 'technology', 'obje
 
 
 //Building blocks
-const createUnsplashUrl = (photoResolution, categoryName) => {
-  let resolution = photoResolution || "1920x1080";
-  let category = categoryName || "random";
+const createUnsplashUrl = ({photoResolution: photoResolution = '1920x1080', categoryName: categoryName = 'random'}) => {
   let url;
   categoryName === "random"?
     url = `${unsplashBaseUrl}/random/${photoResolution}`:
@@ -26,6 +25,7 @@ const createUnsplashUrl = (photoResolution, categoryName) => {
   // deferred.reject("Error");
   return deferred.promise;
 };
+
 const downloadImage = (destinationPath, imageUrl) => {
   console.log(`ready to download: ${imageUrl} to ${destinationPath}`);
   const deferred = Q.defer();
@@ -41,26 +41,25 @@ const downloadImage = (destinationPath, imageUrl) => {
 
 const map = R.curry((fn, functor) => functor.bind(fn));
 
-const curriedCreateUnsplashUrl = R.curry(createUnsplashUrl);
+
 const curriedDownloadImage = R.curry(downloadImage);
-const createUnsplashUrlLarge = curriedCreateUnsplashUrl("1920x1080");
 const downloadImageToJunkFolder = curriedDownloadImage(imageDestinationPath + '/image.jpg');
+const searchAndDownload = R.pipeP(map(createUnsplashUrl),map(downloadImageToJunkFolder), map(wallpaper.set));
+// const searchAndDownload = R.pipeP(map(createUnsplashUrlLarge),map(downloadImageToJunkFolder), map(wallpaper.set));
 
-const searchAndDownload = R.pipeP(map(createUnsplashUrlLarge),map(downloadImageToJunkFolder), map(wallpaper.set));
-// const searchAndDownload = R.pipeP(map(createUnsplashUrlLarge),console.log);
-
-const main = () => {
-  PromiseMaybe('random')
+const main = (options) => {
+  PromiseMaybe(options)
   .then((input) => searchAndDownload(input))
-  .then(() => setTimeout(main, 5000));
-  // .then((imagePath) => {
-  //   console.log(`file path: ${imagePath.isNothing()}`);
-  //   console.log(imagePath.val())
-  //   wallpaper.set(imagePath.val())
-  //   setTimeout(main, 5000);
-  //   }, (error) => console.log(error));
-  // });
+  .then((output) => {
+    console.log(`isNothing? ${output.isNothing()}`);
+    setTimeout(main(options), 5000)
+  });
 }
 
 //Main loop
-setTimeout(main, 5000);
+
+const options = WallsplashOptions({
+  photoResolution : '1920x1080',
+  categoryName: 'nature'
+});
+setTimeout(main(options), 5000);

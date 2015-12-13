@@ -16,7 +16,6 @@ const PromiseMaybe = (value) => {
     return {
       bind: (fn) =>{
         const deferred =  Q.defer();
-
         Q(fn.call(this, value)).then((x) => deferred.resolve(Something(x)));
         return deferred.promise;
       },
