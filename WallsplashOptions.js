@@ -1,15 +1,20 @@
 import R          from "ramda";
 
 const resolutionRegEx = /^\d+[x]\d+$/;
-const categories = ['buildings', 'food', 'nature', 'people', 'technology', 'objects'];
+const categories = ['buildings', 'food', 'nature', 'people', 'technology', 'objects', 'random'];
 
-const WallsplashOptions = (options) => R.pick(['photoResolution', 'categoryName'], options);
+const opts = {
+  photoResolution: null,
+  categoryName: null,
+  isNull: function () {
+    if(((resolutionRegEx.exec(this.photoResolution) === null) || (this.categoryName !== null && this.categoryName !== 'undefined' && !(R.contains(this.categoryName,categories)))))
+      return true;
+       return false;
+  }
+};
+
+const WallsplashOptions = (options) => (Object.assign(Object.create(opts),R.pick(['photoResolution', 'categoryName'], options)));
 
 
-WallsplashOptions.prototype.isNull = () => {
-  ((resolutionRegEx.exec(photoResolution) === null) || !(R.contains(categoryName,categories)))?
-    true:
-     false;
-}
 
 export default WallsplashOptions;
